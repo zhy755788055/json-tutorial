@@ -17,7 +17,8 @@ static void lept_parse_whitespace(lept_context* c)
     c->json = p;
 }
 
-static int lept_parse_null(lept_context* c, lept_value* v) {
+static int lept_parse_null(lept_context* c, lept_value* v)
+{
     EXPECT(c, 'n');
     if (c->json[0] != 'u' || c->json[1] != 'l' || c->json[2] != 'l')
         return LEPT_PARSE_INVALID_VALUE;

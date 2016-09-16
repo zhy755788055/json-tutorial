@@ -4,7 +4,8 @@
 
 #define EXPECT(c, ch)       do { assert(*c->json == (ch)); c->json++; } while(0)
 
-typedef struct {
+typedef struct
+{
     const char* json;
 }lept_context;
 

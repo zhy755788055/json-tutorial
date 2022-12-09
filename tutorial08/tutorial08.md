@@ -39,7 +39,7 @@ struct lept_member {
 size_t lept_get_object_size(const lept_value* v);
 const char* lept_get_object_key(const lept_value* v, size_t index);
 size_t lept_get_object_key_length(const lept_value* v, size_t index);
-lept_value* lept_get_object_value(lept_value* v, size_t index);
+lept_value* lept_get_object_value(const lept_value* v, size_t index);
 ~~~
 
 在实际使用时，我们许多时候需要查询一个键值是否存在，如存在，要获得其相应的值。我们可以提供一个函数，简单地用线性搜寻实现这个查询功能（时间复杂度 $\mathrm{O}(n)$）：
@@ -75,7 +75,7 @@ lept_free(&o);
 由于一般也是希望获取键对应的值，而不需要索引，我们再加入一个辅助函数，返回类型改为 `lept_value*`：
 
 ~~~c
-lept_value* lept_find_object_value(lept_value* v, const char* key, size_t klen) {
+lept_value* lept_find_object_value(const lept_value* v, const char* key, size_t klen) {
     size_t index = lept_find_object_index(v, key, klen);
     return index != LEPT_KEY_NOT_EXIST ? &v->u.o.m[index].v : NULL;
 }
@@ -182,7 +182,7 @@ void lept_copy(lept_value* dst, const lept_value* src) {
 }
 ~~~
 
-C++11 加入了右值引用的功能，可以从语言层面区分复制和移动语意。而在 C 语言中，我们也可以通过实现不同版本的接口（不同名字的函数），实现这两种语意。但为了令接口更简单和正交（orthgonal），我们修改了 `lept_set_object_value()` 的设计，让它返回新增键值对的值指针，所以我们可以用 `lept_copy()` 去复制赋值，也可以简单地改变新增的键值：
+C++11 加入了右值引用的功能，可以从语言层面区分复制和移动语意。而在 C 语言中，我们也可以通过实现不同版本的接口（不同名字的函数），实现这两种语意。但为了令接口更简单和正交（orthogonal），我们修改了 `lept_set_object_value()` 的设计，让它返回新增键值对的值指针，所以我们可以用 `lept_copy()` 去复制赋值，也可以简单地改变新增的键值：
 
 ~~~c
 /* 返回新增键值对的指针 */
@@ -393,8 +393,8 @@ void lept_remove_object_value(lept_value* v, size_t index);
 本单元练习内容：
 
 1. 完成 `lept_is_equal()` 里的对象比较部分。不需要考虑对象内有重复键的情况。
-2. 打开 `test_array_access()` 里的 `#if 0`，实现 `lept_insert_array_element()`、`lept_erase_array_element()` 和 `lept_clear_array()`。
-3. 打开 `test_object_access()` 里的 `#if 0`，参考动态数组，实现第 5 部分列出的所有函数。
+2. 打开 `test_access_array()` 里的 `#if 0`，实现 `lept_insert_array_element()`、`lept_erase_array_element()` 和 `lept_clear_array()`。
+3. 打开 `test_access_object()` 里的 `#if 0`，参考动态数组，实现第 5 部分列出的所有函数。
 4. 完成 `lept_copy()` 里的数组和对象的复制部分。
 
 如果你遇到问题，有不理解的地方，或是有建议，都欢迎在评论或 [issue](https://github.com/miloyip/json-tutorial/issues) 中提出，让所有人一起讨论。

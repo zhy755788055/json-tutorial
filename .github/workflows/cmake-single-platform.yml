@@ -38,9 +38,12 @@ jobs:
             cmake ..  
             # 编译项目  
             make
+            # 执行
+            ./leptjson_test > result.txt 2>&1
             # 复制可执行文件
             mkdir ../../output/$dir
             cp leptjson_test ../../output/$dir
+            cp result.txt ../../output/$dir
             # 返回上一级目录  
             cd ../..  
           fi  
@@ -48,7 +51,7 @@ jobs:
 
     - name: Upload artifacts  
       # 将打包文件作为构建产物保存  
-      uses: actions/upload-artifact@v2  
+      uses: actions/upload-artifact@v4
       with:  
         name: build-artifacts  
         path: output

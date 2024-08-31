@@ -50,6 +50,7 @@ jobs:
             cd ../..  
           fi  
         done  
+        tar cvf output.tar.gz output
 
     - name: Upload artifacts  
       # 将打包文件作为构建产物保存  
@@ -57,3 +58,27 @@ jobs:
       with:  
         name: build-artifacts  
         path: output
+
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body: |
+          Changes in this Release
+          - First Release
+          
+    - name: Upload Release Asset
+      id: upload_asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./output.tar.gz
+        asset_name: output.tar.gz
+        asset_content_type: application/gzip
